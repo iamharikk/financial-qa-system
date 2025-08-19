@@ -1,17 +1,17 @@
 import streamlit as st
 import time
 from guardrails import validate_all_inputs
-from model_handler import load_distilgpt2_model, generate_response
+from model_handler import load_gpt2_small_model, generate_response
 
 st.title("Financial QA System App")
 
 # Load model with caching
 @st.cache_resource
 def get_model():
-    return load_distilgpt2_model()
+    return load_gpt2_small_model()
 
 # Display model loading status
-with st.spinner("Loading DistilGPT-2 model..."):
+with st.spinner("Loading GPT-2 Small model..."):
     model = get_model()
 
 if model is not None:
@@ -40,7 +40,7 @@ if st.button("Ask"):
                 # Start timing the response
                 start_time = time.time()
                 
-                # Generate response using DistilGPT-2
+                # Generate response using GPT-2 Small
                 with st.spinner("Generating response..."):
                     answer, confidence_score = generate_response(text, model)
                 

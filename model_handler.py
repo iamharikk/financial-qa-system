@@ -4,9 +4,9 @@ import torch
 from typing import Tuple
 
 @st.cache_resource
-def load_distilgpt2_model():
+def load_gpt2_small_model():
     try:
-        model_name = "distilgpt2"
+        model_name = "gpt2"
         
         tokenizer = AutoTokenizer.from_pretrained(model_name)
         model = AutoModelForCausalLM.from_pretrained(model_name)
@@ -39,7 +39,7 @@ def generate_response(query: str, generator) -> Tuple[str, float]:
         return "Model not loaded properly", 0.0
     
     try:
-        prompt = f"Question: {query}\nAnswer:"
+        prompt = f"You are a helpful assistant. Answer the following question clearly and concisely.\n\nQuestion: {query}\nAnswer:"
         
         result = generator(
             prompt, 
@@ -110,8 +110,8 @@ def truncate_at_sentence_end(text: str) -> str:
 
 def get_model_info():
     return {
-        "model_name": "DistilGPT-2",
-        "description": "Distilled version of GPT-2, smaller and faster",
-        "parameters": "82M",
-        "size": "~350MB"
+        "model_name": "GPT-2 Small",
+        "description": "Small version of GPT-2 with better Q&A capabilities",
+        "parameters": "124M",
+        "size": "~500MB"
     }
