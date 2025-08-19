@@ -44,3 +44,6 @@ Thumbs.db
 # Model cache (if downloading models locally)
 models/
 .cache/
+
+#Data
+data/financial-statements
