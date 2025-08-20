@@ -185,7 +185,7 @@ class SimpleGPT2FineTuner:
             logging_steps=50,
             logging_dir=f"{output_dir}/logs",
             save_strategy="epoch",
-            evaluation_strategy="epoch" if self.val_dataset else "no",
+            eval_strategy="epoch" if self.val_dataset else "no",  # Changed from evaluation_strategy
             load_best_model_at_end=True if self.val_dataset else False,
             metric_for_best_model="eval_loss" if self.val_dataset else None,
             report_to=None,  # Don't report to wandb/tensorboard
