@@ -20,9 +20,9 @@ def get_rag_system():
     """Initialize the complete RAG system"""
     try:
         with st.spinner("Setting up RAG system..."):
-            # Load and chunk data
+            # Load and chunk data (use QA pairs for better responses)
             chunker = SimpleTextChunker()
-            chunks = chunker.process_file("data/financial-statements/tcs_clean.txt")
+            chunks = chunker.process_file("data/q-and-a/qa-pairs.txt")
             
             # Create embeddings and indices
             indexer = SimpleEmbeddingIndexer()
