@@ -81,41 +81,40 @@ if st.button("Ask"):
                     # Use RAG system
                     if rag_system is None:
                         st.error("RAG system not loaded. Please refresh the page.")
-                        return
-                    
-                    with st.spinner("Processing with RAG system..."):
-                        rag_result = rag_system.generate_rag_response(text, final_k=3, broad_k=10)
-                    
-                    answer = rag_result['generated_response']
-                    confidence_score = rag_result['confidence_score']
-                    
-                    # Calculate actual response time
-                    end_time = time.time()
-                    response_time = round(end_time - start_time, 3)
-                    
-                    st.success("Query processed successfully with RAG!")
-                    st.write(f"**Answer:** {answer}")
-                    st.write(f"**Confidence Score:** {confidence_score}")
-                    st.write(f"**Method Used:** {method}")
-                    st.write(f"**Response Time:** {response_time} seconds")
-                    
-                    # Show RAG details
-                    with st.expander("RAG System Details"):
-                        st.write(f"**Retrieved Passages:** {len(rag_result['retrieved_passages'])}")
+                    else:
+                        with st.spinner("Processing with RAG system..."):
+                            rag_result = rag_system.generate_rag_response(text, final_k=3, broad_k=10)
                         
-                        for i, passage in enumerate(rag_result['retrieved_passages'], 1):
-                            st.write(f"**Passage {i}** (Score: {passage['cross_encoder_score']:.3f}):")
-                            st.write(f"{passage['chunk']['text'][:200]}...")
-                            st.write("---")
+                        answer = rag_result['generated_response']
+                        confidence_score = rag_result['confidence_score']
                         
-                        st.write(f"**Token Usage:**")
-                        st.write(f"- Prompt tokens: {rag_result['token_stats']['prompt_tokens']}")
-                        st.write(f"- Response tokens: {rag_result['token_stats']['response_tokens']}")
+                        # Calculate actual response time
+                        end_time = time.time()
+                        response_time = round(end_time - start_time, 3)
                         
-                        st.write(f"**Retrieval Stats:**")
-                        st.write(f"- Stage 1 candidates: {rag_result['retrieval_stats']['stage1_count']}")
-                        st.write(f"- Final results: {rag_result['retrieval_stats']['final_count']}")
-                        st.write(f"- Retrieval time: {rag_result['retrieval_stats']['total_time']:.2f}s")
+                        st.success("Query processed successfully with RAG!")
+                        st.write(f"**Answer:** {answer}")
+                        st.write(f"**Confidence Score:** {confidence_score}")
+                        st.write(f"**Method Used:** {method}")
+                        st.write(f"**Response Time:** {response_time} seconds")
+                        
+                        # Show RAG details
+                        with st.expander("RAG System Details"):
+                            st.write(f"**Retrieved Passages:** {len(rag_result['retrieved_passages'])}")
+                            
+                            for i, passage in enumerate(rag_result['retrieved_passages'], 1):
+                                st.write(f"**Passage {i}** (Score: {passage['cross_encoder_score']:.3f}):")
+                                st.write(f"{passage['chunk']['text'][:200]}...")
+                                st.write("---")
+                            
+                            st.write(f"**Token Usage:**")
+                            st.write(f"- Prompt tokens: {rag_result['token_stats']['prompt_tokens']}")
+                            st.write(f"- Response tokens: {rag_result['token_stats']['response_tokens']}")
+                            
+                            st.write(f"**Retrieval Stats:**")
+                            st.write(f"- Stage 1 candidates: {rag_result['retrieval_stats']['stage1_count']}")
+                            st.write(f"- Final results: {rag_result['retrieval_stats']['final_count']}")
+                            st.write(f"- Retrieval time: {rag_result['retrieval_stats']['total_time']:.2f}s")
                 
                 else:
                     # Use fine-tuned model (original implementation)
