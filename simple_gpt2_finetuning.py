@@ -268,9 +268,14 @@ def main():
     print("SIMPLE GPT-2 FINE-TUNING")
     print("=" * 60)
     
-    # Check if datasets exist
-    train_file = "finetuning_datasets/train_prompt_completion.jsonl"
-    val_file = "finetuning_datasets/val_prompt_completion.jsonl"
+    # Check if datasets exist (try conversation format first, then prompt-completion)
+    train_file = "finetuning_datasets/train_conversation.jsonl"
+    val_file = "finetuning_datasets/val_conversation.jsonl"
+    
+    # If conversation format doesn't exist, try prompt-completion format
+    if not os.path.exists(train_file):
+        train_file = "finetuning_datasets/train_prompt_completion.jsonl"
+        val_file = "finetuning_datasets/val_prompt_completion.jsonl"
     
     if not os.path.exists(train_file):
         print(f"Error: Training file {train_file} not found!")
