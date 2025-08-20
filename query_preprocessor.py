@@ -8,15 +8,18 @@ from sentence_transformers import SentenceTransformer
 import numpy as np
 
 # Download required NLTK data (run once)
+import ssl
 try:
-    nltk.data.find('tokenizers/punkt')
-except LookupError:
-    nltk.download('punkt')
+    _create_unverified_https_context = ssl._create_unverified_context
+except AttributeError:
+    pass
+else:
+    ssl._create_default_https_context = _create_unverified_https_context
 
-try:
-    nltk.data.find('corpora/stopwords')
-except LookupError:
-    nltk.download('stopwords')
+# Download all required NLTK data
+nltk.download('punkt', quiet=True)
+nltk.download('punkt_tab', quiet=True) 
+nltk.download('stopwords', quiet=True)
 
 class QueryPreprocessor:
     """Simple query preprocessing and embedding for retrieval"""
