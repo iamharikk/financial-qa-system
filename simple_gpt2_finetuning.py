@@ -57,13 +57,16 @@ class TCSQADataset(Dataset):
                         # Prompt-completion format
                         text = item['prompt'] + item['completion']
                     elif 'messages' in item:
-                        # Conversation format - combine all messages
+                        # Conversation format - combine user and assistant messages only
                         text = ""
                         for message in item['messages']:
                             if message['role'] == 'user':
-                                text += f"Question: {message['content']}\n"
+                                text += f"Question: {message['content']} "
                             elif message['role'] == 'assistant':
-                                text += f"Answer: {message['content']}\n"
+                                text += f"Answer: {message['content']}"
+                        # Skip if no user/assistant messages found
+                        if not text.strip():
+                            continue
                     else:
                         continue
                     
@@ -73,6 +76,7 @@ class TCSQADataset(Dataset):
                     
                 except Exception as e:
                     print(f"Warning: Could not parse line: {e}")
+                    print(f"Problem line content: {line[:100]}...")
                     continue
     
     def __len__(self):
