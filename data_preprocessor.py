@@ -119,6 +119,126 @@ class DataPreprocessor:
         
         return '\n'.join(filtered_lines)
     
+    def segment_financial_statements(self, text: str) -> dict:
+        """Segment financial data into logical sections"""
+        segments = {
+            'income_statement': [],
+            'balance_sheet': [],
+            'cash_flow': [],
+            'other': []
+        }
+        
+        current_section = 'other'
+        lines = text.split('\n')
+        
+        for line in lines:
+            line_lower = line.lower().strip()
+            
+            # Identify section based on keywords
+            if any(keyword in line_lower for keyword in [
+                'profit & loss', 'profit and loss', 'income statement', 
+                'sales turnover', 'net sales', 'total income', 'operating profit',
+                'reported net profit', 'earnings per share'
+            ]):
+                current_section = 'income_statement'
+            
+            elif any(keyword in line_lower for keyword in [
+                'balance sheet', 'sources of funds', 'application of funds',
+                'total share capital', 'networth', 'total assets', 'total liabilities',
+                'current assets', 'current liabilities'
+            ]):
+                current_section = 'balance_sheet'
+            
+            elif any(keyword in line_lower for keyword in [
+                'cash flow', 'net cash from operating', 'investing activities',
+                'financing activities', 'cash and cash equivalents'
+            ]):
+                current_section = 'cash_flow'
+            
+            # Add line to current section
+            if line.strip():
+                segments[current_section].append(line)
+        
+        return segments
+    
+    def remove_duplicate_content(self, segments: dict) -> dict:
+        """Remove duplicate tables and malformed content"""
+        cleaned_segments = {}
+        
+        for section_name, content in segments.items():
+            if not content:
+                cleaned_segments[section_name] = []
+                continue
+            
+            # Join content and split into logical blocks
+            full_content = '\n'.join(content)
+            
+            # Remove duplicate table headers and malformed tables
+            lines = full_content.split('\n')
+            seen_lines = set()
+            cleaned_lines = []
+            
+            for line in lines:
+                line_cleaned = re.sub(r'\s+', ' ', line.strip())
+                
+                # Skip empty lines and page markers
+                if not line_cleaned or 'PAGE' in line or '===' in line:
+                    continue
+                
+                # Skip duplicate table markers
+                if line_cleaned.startswith('Table') and line_cleaned in seen_lines:
+                    continue
+                
+                # Skip malformed table content (too many separators)
+                if line.count('|') > 10:
+                    continue
+                
+                # Add unique meaningful content
+                if line_cleaned not in seen_lines and len(line_cleaned) > 3:
+                    seen_lines.add(line_cleaned)
+                    cleaned_lines.append(line.strip())
+            
+            cleaned_segments[section_name] = cleaned_lines
+        
+        return cleaned_segments
+    
+    def format_segmented_report(self, segments: dict) -> str:
+        """Format segmented financial data into readable report"""
+        formatted_report = []
+        
+        # Income Statement Section
+        if segments['income_statement']:
+            formatted_report.append("=" * 60)
+            formatted_report.append("INCOME STATEMENT & PROFIT & LOSS")
+            formatted_report.append("=" * 60)
+            formatted_report.extend(segments['income_statement'])
+            formatted_report.append("\n")
+        
+        # Balance Sheet Section
+        if segments['balance_sheet']:
+            formatted_report.append("=" * 60)
+            formatted_report.append("BALANCE SHEET")
+            formatted_report.append("=" * 60)
+            formatted_report.extend(segments['balance_sheet'])
+            formatted_report.append("\n")
+        
+        # Cash Flow Section
+        if segments['cash_flow']:
+            formatted_report.append("=" * 60)
+            formatted_report.append("CASH FLOW STATEMENT")
+            formatted_report.append("=" * 60)
+            formatted_report.extend(segments['cash_flow'])
+            formatted_report.append("\n")
+        
+        # Other Information
+        if segments['other']:
+            formatted_report.append("=" * 60)
+            formatted_report.append("OTHER INFORMATION")
+            formatted_report.append("=" * 60)
+            formatted_report.extend(segments['other'])
+        
+        return '\n'.join(formatted_report)
+    
     def process_document(self, file_path: str, output_path: Optional[str] = None) -> str:
         """Process document and return clean text"""
         
@@ -147,12 +267,37 @@ class DataPreprocessor:
         # Clean the text
         cleaned_text = self.clean_financial_text(raw_text)
         
-        # Save if output path provided
-        if output_path:
-            self.save_text(cleaned_text, output_path)
+        # Segment into financial statements
+        st.info("Segmenting financial statements...")
+        segments = self.segment_financial_statements(cleaned_text)
         
-        st.success(f"Document processed successfully! Text length: {len(cleaned_text)} characters")
-        return cleaned_text
+        # Remove duplicates and clean content
+        st.info("Removing duplicates and cleaning content...")
+        cleaned_segments = self.remove_duplicate_content(segments)
+        
+        # Format into structured report
+        st.info("Formatting segmented report...")
+        final_report = self.format_segmented_report(cleaned_segments)
+        
+        # Save individual segments only (no consolidated report)
+        if output_path:
+            base_path = Path(output_path).parent
+            base_name = Path(output_path).stem
+            
+            segment_files = []
+            for section_name, content in cleaned_segments.items():
+                if content:
+                    section_file = base_path / f"{base_name}_{section_name}.txt"
+                    section_text = '\n'.join(content)
+                    self.save_text(section_text, str(section_file))
+                    segment_files.append(str(section_file))
+            
+            st.success(f"Individual segment files created: {len(segment_files)} files")
+            for file in segment_files:
+                st.info(f"• {Path(file).name}")
+        
+        st.success(f"Document processed and segmented successfully!")
+        return final_report  # Return for display purposes only
     
     def save_text(self, text: str, output_path: str) -> bool:
         """Save text to file"""
