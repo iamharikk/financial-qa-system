@@ -158,8 +158,10 @@ Answer:"""
     def generate_response_with_context(self, prompt: str) -> Tuple[str, float]:
         """Generate response using the RAG prompt with retrieved context"""
         try:
-            # Tokenize input
-            inputs = self.tokenizer.encode(prompt, return_tensors='pt')
+            # Tokenize input with attention mask
+            encoded = self.tokenizer(prompt, return_tensors='pt', padding=True, truncation=True)
+            inputs = encoded['input_ids']
+            attention_mask = encoded['attention_mask']
             prompt_length = len(inputs[0])
             
             # Calculate max new tokens (leave room in context window)
@@ -172,6 +174,7 @@ Answer:"""
             with torch.no_grad():
                 outputs = self.model.generate(
                     inputs,
+                    attention_mask=attention_mask,
                     max_new_tokens=max_new_tokens,
                     do_sample=True,
                     temperature=0.7,  # Slightly lower for more focused responses
