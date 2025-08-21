@@ -98,7 +98,7 @@ def main():
         )
         
         # For causal LM, labels are the same as input_ids
-        model_inputs["labels"] = model_inputs["input_ids"].copy()
+        model_inputs["labels"] = [ids[:] for ids in model_inputs["input_ids"]]
         
         return model_inputs
     
