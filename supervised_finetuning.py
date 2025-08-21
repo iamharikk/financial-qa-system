@@ -113,16 +113,20 @@ def main():
     print("Training arguments configured")
     
     print("\n5. Creating Trainer and Starting Fine-tuning...")
-    # Simple data collator - following doc approach
-    def simple_data_collator(data):
-        return {k: torch.tensor([f[k] for f in data]) for k in data[0]}
+    # Use proper data collator for language modeling
+    from transformers import DataCollatorForLanguageModeling
+    
+    data_collator = DataCollatorForLanguageModeling(
+        tokenizer=tokenizer,
+        mlm=False,  # We're doing causal LM, not masked LM
+    )
     
     # Create trainer - exactly as in doc
     trainer = Trainer(
         model=model,
         args=training_args,
         train_dataset=tokenized_datasets["train"],
-        data_collator=simple_data_collator,
+        data_collator=data_collator,
     )
     
     # Start training with timing
