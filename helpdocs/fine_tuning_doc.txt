@@ -1,0 +1,79 @@
+1. Supervised Fine-tuning (SFT)
+Python
+from datasets import load_dataset
+from transformers import AutoTokenizer, AutoModelForCausalLM,
+TrainingArguments, Trainer
+# 1. Load a Supervised Fine-tuning Dataset
+# For example, a dataset of instructions and their corresponding responses
+dataset = load_dataset("json", data_files="sft_data.json")
+# Assuming your sft_data.json looks something like this:
+# [
+# {"instruction": "Write a short story about a cat.", "output": "Whiskers the cat
+loved to nap in sunbeams..."},
+# {"instruction": "Translate 'Hello' to French.", "output": "Bonjour"}
+# ]
+
+# 2. Load a Pre-trained Language Model and
+Tokenizer model_name = "gpt2"# You can replace this with a
+different model
+tokenizer =AutoTokenizer.from_pretrained(model_name)
+model=AutoModelForCausalLM.from_pretrained(model_name) #
+Add padding token
+if not present (some models don't have one by default) if
+tokenizer.pad_token is None:
+tokenizer.pad_token = tokenizer.eos_token
+model.config.pad_token_id = model.config.eos_token_id
+
+# 3. Preprocess the Dataset def
+preprocess_function(examples): inputs =
+[f"{ex['instruction']}\n{tokenizer.bos_token}" for ex in examples]
+targets = [f"{ex['output']}{tokenizer.eos_token}" for ex in
+examples] model_inputs = tokenizer(inputs, truncation=True,
+padding="longest") with tokenizer.as_target_tokenizer(): labels =
+tokenizer(targets, truncation=True, padding="longest")
+model_inputs["labels"] = labels["input_ids"] return model_inputs
+tokenized_datasets = dataset.map(preprocess_function,
+batched=True)
+
+# 4. Define Training Arguments
+training_args = TrainingArguments(
+output_dir="./sft_model",
+per_device_train_batch_size=8,
+learning_rate=2e-5,
+num_train_epochs=3,
+logging_dir="./logs",
+remove_unused_columns=False, # Keep 'instruction' and 'output' for
+potential later use
+report_to="none" # Or "tensorboard" if you have it installed
+)
+
+# 5. Create a Trainer and Fine-tune the Model
+trainer = Trainer(
+model=model,
+args=training_args,
+train_dataset=tokenized_datasets["train"],
+data_collator=lambda data: {k: torch.tensor([f[k] for f in data]) for
+k in data[0]}, # Simple data collator
+)
+trainer.train()
+model.save_pretrained("./fine_tuned_sft_model")
+tokenizer.save_pretrained("./fine_tuned_sft_model")
+print("SFT Fine-tuning Done!")
+
+Explanation:
+• Load Dataset: We load a JSON dataset (you can adapt this to other formats). The data consists of
+instructions and desired outputs.
+• Load Model and Tokenizer: We load a pre-trained causal language model (like GPT-2) and its
+corresponding tokenizer.
+• Preprocess Dataset:
+• We format the input as "instruction \n [BOS]".
+• We format the target as "output [EOS]".
+• We tokenize both inputs and targets, handling padding and truncation.
+• Crucially, we set the labels in the model_inputs to be the tokenized targets. The Trainer will use these
+labels to compute the loss.
+• Training Arguments: We define parameters for training, such as the output directory, batch size,
+learning rate, and number of epochs.
+• Trainer: We create a Trainer instance, providing the model, training arguments, training dataset, and a
+simple data collator. The Trainer handles the training loop.
+• Train: We start the fine-tuning process using trainer.train().
+• Save Model: After training, we save the fine-tuned model and tokenizer.
