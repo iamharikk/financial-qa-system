@@ -83,8 +83,8 @@ def main():
     print("\n3. Preprocessing the Dataset...")
     # Preprocess function - following doc structure exactly
     def preprocess_function(examples):
-        inputs = [f"{ex['instruction']}\n{tokenizer.bos_token}" for ex in examples]
-        targets = [f"{ex['output']}{tokenizer.eos_token}" for ex in examples]
+        inputs = [f"{examples['instruction'][i]}\n{tokenizer.bos_token}" for i in range(len(examples['instruction']))]
+        targets = [f"{examples['output'][i]}{tokenizer.eos_token}" for i in range(len(examples['output']))]
         
         model_inputs = tokenizer(inputs, truncation=True, padding="longest", max_length=hyperparameters["max_length"])
         
