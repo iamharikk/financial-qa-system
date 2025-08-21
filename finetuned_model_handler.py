@@ -74,8 +74,7 @@ class FineTunedModelHandler:
                     pad_token_id=self.tokenizer.pad_token_id,
                     eos_token_id=self.tokenizer.eos_token_id,
                     return_dict_in_generate=True,
-                    output_scores=True,
-                    early_stopping=True
+                    output_scores=True
                 )
             
             # Extract generated sequence
@@ -136,7 +135,8 @@ class FineTunedModelHandler:
                 
                 if token_probs:
                     # Use geometric mean for confidence (more conservative)
-                    confidence = np.exp(np.mean(np.log(token_probs + 1e-10)))
+                    token_probs_array = np.array(token_probs)
+                    confidence = np.exp(np.mean(np.log(token_probs_array + 1e-10)))
                     return min(confidence, 0.99)  # Cap at 0.99
                 else:
                     return 0.5
