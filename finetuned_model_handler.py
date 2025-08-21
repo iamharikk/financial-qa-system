@@ -57,16 +57,19 @@ class FineTunedModelHandler:
         start_time = time.time()
         
         try:
-            # Format the input following the fine-tuning format
-            input_text = f"{question}\n"
+            # Format the input following the fine-tuning format (Question: ... Answer: format)
+            input_text = f"Question: {question}\nAnswer: "
             
-            # Tokenize input
-            input_ids = self.tokenizer.encode(input_text, return_tensors="pt")
+            # Tokenize input with attention mask
+            inputs = self.tokenizer(input_text, return_tensors="pt")
+            input_ids = inputs["input_ids"]
+            attention_mask = inputs["attention_mask"]
             
             # Generate response with scores for confidence calculation
             with torch.no_grad():
                 outputs = self.model.generate(
                     input_ids,
+                    attention_mask=attention_mask,
                     max_length=input_ids.shape[1] + max_length,
                     num_return_sequences=1,
                     temperature=temperature,
@@ -74,7 +77,8 @@ class FineTunedModelHandler:
                     pad_token_id=self.tokenizer.pad_token_id,
                     eos_token_id=self.tokenizer.eos_token_id,
                     return_dict_in_generate=True,
-                    output_scores=True
+                    output_scores=True,
+                    repetition_penalty=1.2  # Prevent repetitive generation
                 )
             
             # Extract generated sequence
