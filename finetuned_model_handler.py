@@ -87,14 +87,13 @@ class FineTunedModelHandler:
             # Extract only the generated part (after the input)
             generated_answer = full_response[len(input_text):].strip()
             
-            # Stop at the first sentence or reasonable length
+            # Simple cleanup - just take the first line and remove any trailing EOS tokens
             if generated_answer:
-                # Clean up the answer
-                sentences = generated_answer.split('.')
-                if len(sentences) > 1 and sentences[0].strip():
-                    generated_answer = sentences[0].strip() + '.'
-                else:
-                    generated_answer = generated_answer.split('\n')[0].strip()
+                # Take first line only to avoid long responses
+                first_line = generated_answer.split('\n')[0].strip()
+                # Remove common unwanted tokens that might appear
+                first_line = first_line.replace('<|endoftext|>', '').strip()
+                generated_answer = first_line
             
             # Calculate confidence score from generation probabilities
             confidence_score = self._calculate_confidence(outputs, input_ids.shape[1])
