@@ -17,10 +17,25 @@ def get_model():
 
 @st.cache_resource
 def get_finetuned_model():
-    """Load the fine-tuned model"""
+    """Load the fine-tuned model (try v2 first, fallback to v1)"""
     try:
         with st.spinner("Loading fine-tuned model..."):
-            return load_finetuned_model()
+            # Try to load improved version first
+            from finetuned_model_handler import FineTunedModelHandler
+            
+            # Try v2 first (improved model)
+            handler_v2 = FineTunedModelHandler("./fine_tuned_sft_model_v2")
+            if handler_v2.load_model():
+                st.info("Loaded improved fine-tuned model (v2)")
+                return handler_v2
+            
+            # Fallback to v1
+            handler_v1 = FineTunedModelHandler("./fine_tuned_sft_model")
+            if handler_v1.load_model():
+                st.info("Loaded original fine-tuned model (v1)")
+                return handler_v1
+            
+            return None
     except Exception as e:
         st.error(f"Error loading fine-tuned model: {str(e)}")
         return None

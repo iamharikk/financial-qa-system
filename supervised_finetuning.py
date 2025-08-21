@@ -8,18 +8,23 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, TrainingArguments,
 def log_hyperparameters_and_setup():
     """Log all hyperparameters and compute setup"""
     
-    # Hyperparameters
+    # Improved Hyperparameters for better learning
     hyperparameters = {
         "model_name": "gpt2",
         "data_file": "finetuning_datasets/finetuning_data.json",
         "output_dir": "./sft_model",
-        "per_device_train_batch_size": 8,
-        "learning_rate": 2e-5,
-        "num_train_epochs": 3,
+        "per_device_train_batch_size": 4,  # Smaller batch for better convergence
+        "gradient_accumulation_steps": 4,  # Effective batch size = 4*4 = 16
+        "learning_rate": 1e-5,  # Lower learning rate for precise learning
+        "num_train_epochs": 8,  # More epochs to learn the data better
+        "warmup_steps": 50,  # Gradual learning rate warmup
+        "weight_decay": 0.01,  # Regularization
+        "logging_steps": 20,  # More frequent logging
+        "save_steps": 100,  # Save checkpoints more frequently
         "logging_dir": "./logs",
         "max_length": 512,
         "temperature": 0.7,
-        "final_model_dir": "./fine_tuned_sft_model"
+        "final_model_dir": "./fine_tuned_sft_model_v2"  # New version
     }
     
     # Compute setup
@@ -112,15 +117,32 @@ def main():
     print("Dataset preprocessing completed")
     
     print("\n4. Defining Training Arguments...")
-    # Training arguments - following doc structure
+    # Improved training arguments for better convergence
     training_args = TrainingArguments(
         output_dir=hyperparameters["output_dir"],
+        overwrite_output_dir=True,
         per_device_train_batch_size=hyperparameters["per_device_train_batch_size"],
+        gradient_accumulation_steps=hyperparameters["gradient_accumulation_steps"],
         learning_rate=hyperparameters["learning_rate"],
         num_train_epochs=hyperparameters["num_train_epochs"],
+        warmup_steps=hyperparameters["warmup_steps"],
+        weight_decay=hyperparameters["weight_decay"],
         logging_dir=hyperparameters["logging_dir"],
-        remove_unused_columns=False,  # Keep 'instruction' and 'output' for potential later use
-        report_to="none"  # Or "tensorboard" if you have it installed
+        logging_steps=hyperparameters["logging_steps"],
+        save_steps=hyperparameters["save_steps"],
+        save_strategy="steps",
+        evaluation_strategy="no",
+        load_best_model_at_end=False,
+        remove_unused_columns=False,
+        dataloader_drop_last=True,
+        report_to="none",
+        # Better optimization settings
+        adam_beta1=0.9,
+        adam_beta2=0.999,
+        adam_epsilon=1e-8,
+        max_grad_norm=1.0,
+        lr_scheduler_type="cosine",  # Better learning rate schedule
+        fp16=torch.cuda.is_available(),  # Mixed precision if GPU available
     )
     
     print("Training arguments configured")
@@ -144,24 +166,46 @@ def main():
     start_time = time.time()
     
     try:
-        trainer.train()
+        train_result = trainer.train()
         training_time = time.time() - start_time
         
-        print(f"\nTraining completed in {training_time:.2f} seconds ({training_time/60:.1f} minutes)")
+        print(f"\n" + "=" * 80)
+        print("TRAINING COMPLETED SUCCESSFULLY!")
+        print("=" * 80)
         
-        # Save model - following doc structure
+        print(f"Final training loss: {train_result.training_loss:.6f}")
+        print(f"Training time: {training_time:.2f} seconds ({training_time/60:.1f} minutes)")
+        print(f"Total training steps: {train_result.global_step}")
+        print(f"Training samples processed: {train_result.global_step * hyperparameters['per_device_train_batch_size'] * hyperparameters['gradient_accumulation_steps']}")
+        
+        # Save model - following doc structure  
+        print(f"\nSaving improved model to: {hyperparameters['final_model_dir']}")
         model.save_pretrained(hyperparameters["final_model_dir"])
         tokenizer.save_pretrained(hyperparameters["final_model_dir"])
         print("SFT Fine-tuning Done!")
         
-        # Save training log
+        # Enhanced training log
         training_log = {
             "timestamp": time.strftime('%Y-%m-%d %H:%M:%S'),
-            "technique": "Supervised Instruction Fine-Tuning (SFT)",
+            "technique": "Supervised Instruction Fine-Tuning (SFT) - Improved",
+            "version": "v2",
             "hyperparameters": hyperparameters,
             "compute_setup": compute_setup,
-            "training_time_seconds": training_time,
-            "dataset_size": len(dataset['train']),
+            "training_results": {
+                "training_time_seconds": training_time,
+                "final_train_loss": train_result.training_loss,
+                "total_steps": train_result.global_step,
+                "dataset_size": len(dataset['train']),
+                "effective_batch_size": hyperparameters['per_device_train_batch_size'] * hyperparameters['gradient_accumulation_steps'],
+                "total_samples_processed": train_result.global_step * hyperparameters['per_device_train_batch_size'] * hyperparameters['gradient_accumulation_steps']
+            },
+            "improvements": [
+                "Lower learning rate (1e-5)",
+                "More epochs (8)",
+                "Gradient accumulation",
+                "Cosine learning rate schedule",
+                "Better regularization"
+            ],
             "status": "completed"
         }
         
