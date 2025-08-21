@@ -117,7 +117,7 @@ def main():
     print("Dataset preprocessing completed")
     
     print("\n4. Defining Training Arguments...")
-    # Improved training arguments for better convergence
+    # Improved training arguments for better convergence (compatible version)
     training_args = TrainingArguments(
         output_dir=hyperparameters["output_dir"],
         overwrite_output_dir=True,
@@ -131,17 +131,12 @@ def main():
         logging_steps=hyperparameters["logging_steps"],
         save_steps=hyperparameters["save_steps"],
         save_strategy="steps",
-        evaluation_strategy="no",
-        load_best_model_at_end=False,
         remove_unused_columns=False,
         dataloader_drop_last=True,
         report_to="none",
-        # Better optimization settings
-        adam_beta1=0.9,
-        adam_beta2=0.999,
+        # Core optimization settings (most compatible)
         adam_epsilon=1e-8,
         max_grad_norm=1.0,
-        lr_scheduler_type="cosine",  # Better learning rate schedule
         fp16=torch.cuda.is_available(),  # Mixed precision if GPU available
     )
     
