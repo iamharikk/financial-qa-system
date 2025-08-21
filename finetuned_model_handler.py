@@ -84,8 +84,15 @@ class FineTunedModelHandler:
             # Decode the full response
             full_response = self.tokenizer.decode(generated_ids, skip_special_tokens=True)
             
+            # Debug: Print what we're getting
+            print(f"DEBUG - Full response: '{full_response}'")
+            print(f"DEBUG - Input text: '{input_text}'")
+            print(f"DEBUG - Input length: {len(input_text)}")
+            
             # Extract only the generated part (after the input)
             generated_answer = full_response[len(input_text):].strip()
+            print(f"DEBUG - Generated answer before cleanup: '{generated_answer}'")
+            print(f"DEBUG - Generated answer repr: {repr(generated_answer)}")
             
             # Simple cleanup - just take the first line and remove any trailing EOS tokens
             if generated_answer:
@@ -94,6 +101,7 @@ class FineTunedModelHandler:
                 # Remove common unwanted tokens that might appear
                 first_line = first_line.replace('<|endoftext|>', '').strip()
                 generated_answer = first_line
+                print(f"DEBUG - Final answer: '{generated_answer}'")
             
             # Calculate confidence score from generation probabilities
             confidence_score = self._calculate_confidence(outputs, input_ids.shape[1])
