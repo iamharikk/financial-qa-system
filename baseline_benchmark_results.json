@@ -1,0 +1,125 @@
+{
+  "model": "gpt2-baseline",
+  "timestamp": "2025-08-21 22:24:33",
+  "overall_stats": {
+    "total_questions": 12,
+    "average_accuracy": 0.46049157026340626,
+    "accuracy_std": 0.340093381306327,
+    "average_confidence": 0.5990433872743961,
+    "confidence_std": 0.16888324023140244,
+    "average_inference_time": 3.196065922578176,
+    "total_inference_time": 38.35279107093811,
+    "questions_above_50_accuracy": 6,
+    "questions_above_80_accuracy": 0
+  },
+  "detailed_results": [
+    {
+      "test_id": 1,
+      "question": "What was TCS's sales turnover in Mar '25?",
+      "expected_answer": "TCS's sales turnover in Mar '25 was Rs. 214,853.00 crores.",
+      "generated_answer": "The company has sold about 9 percent in those 14 months. They sold more than 10 percent in all of 2009, and they are on track to reach their goal of selling 10 percent of its products by 2012.\"\nThe company says it will be able to get \"much more than $100 million in sales from its suppliers\" in the first quarter of 2012, according to its website.\nIn other words, the company is on track to sell more than $100 million in products by 2012.",
+      "accuracy": 0.13580246913580246,
+      "confidence": 0.40656495166709644,
+      "inference_time": 4.093746662139893
+    },
+    {
+      "test_id": 2,
+      "question": "What was TCS's net profit in Mar '25?",
+      "expected_answer": "TCS's reported net profit in Mar '25 was Rs. 48,057.00 crores.",
+      "generated_answer": "Net profit in Mar '25 was $5.3 million, up from $6.4 million in Mar '25. The net profit was the largest in the entire industry. So, net profit was $4.3 million, versus $3.9 million in Mar '25.\nIn fact, only 1% of the industry's $4.3 million in net profit went to medical devices, and that was down to under $1 million in Mar '25. Some of the other",
+      "accuracy": 0.8,
+      "confidence": 0.5286184023749957,
+      "inference_time": 3.096500873565674
+    },
+    {
+      "test_id": 3,
+      "question": "What was TCS's employee cost in Mar '25?",
+      "expected_answer": "TCS's employee cost in Mar '25 was Rs. 107,300.00 crores.",
+      "generated_answer": "A total of $13.6 million.\nSource:\nhttp://www.cbc.ca/news/business/article/0,7340,LENO-104617,00.html\nTCS Employee Cost in Mar '25\nNote: The above figure represents the actual cost of the TCS employee services.\nSource:\nhttp://www.cbc.ca/news/business/article/0,7340,LENO-1046",
+      "accuracy": 0.8,
+      "confidence": 0.6704366275880602,
+      "inference_time": 3.1339523792266846
+    },
+    {
+      "test_id": 4,
+      "question": "What was TCS's total income in Mar '24?",
+      "expected_answer": "TCS's total income in Mar '24 was Rs. 208,627.00 crores.",
+      "generated_answer": "$10,000,000.00\nTCS, Inc., a national corporate corporation, is the largest and most prominent private corporation in the United States. Its net income was $1.8 billion in Mar '24.\nSource: Internal Revenue Service, Federal Reserve Committee on Taxation, National Tax Information System, Mar '24, pp. 23-25.\nTCS, Inc. was formed on October 3, 1964. The company was a subsidiary of TCS Company, Inc",
+      "accuracy": 0.8,
+      "confidence": 0.4870965619198978,
+      "inference_time": 3.145007371902466
+    },
+    {
+      "test_id": 5,
+      "question": "What was TCS's book value per share in Mar '25?",
+      "expected_answer": "TCS's book value per share in Mar '25 was Rs. 209.00.",
+      "generated_answer": "TCS's book value per share in Mar '25 is the highest value the company has ever had.\nSource:\n[1] See \"TCS Company's Book Value Per Share: Mar '25\" at page 15, \"TCS Company's Book Value Per Share: Mar '25.\"\n[2] The company's most recent earnings report from May 13, 2011, shows that it lost $4.4 billion of revenue in 2012, but revenue was up $4.4",
+      "accuracy": 0.8,
+      "confidence": 0.498596339810174,
+      "inference_time": 3.1087634563446045
+    },
+    {
+      "test_id": 6,
+      "question": "What was TCS's cash and bank balance in Mar '25?",
+      "expected_answer": "TCS's cash and bank balance in Mar '25 was Rs. 7,152.00 crores.",
+      "generated_answer": "We have the cash and bank balance in $30k.\nWhat was TCS's cash and bank balance in Mar '25?\nWe have the cash and bank balance in $30k.\nWhat was TCS's cash and bank balance in Mar '25?\nWe have the cash and bank balance in $30k.\nWhat was TCS's cash and bank balance in Mar '25?\nWe have the cash and bank balance in $30k.\nWhat was T",
+      "accuracy": 0.8,
+      "confidence": 0.8699825799721294,
+      "inference_time": 3.1068427562713623
+    },
+    {
+      "test_id": 7,
+      "question": "What was TCS's operating profit in Mar '24?",
+      "expected_answer": "TCS's operating profit in Mar '24 was Rs. 55,847.00 crores.",
+      "generated_answer": "It was about $400 million.\nAnswer: It was about $400 million.\nAnswer: It was about $200 million.\nAnswer: It was about $100 million.\nAnswer: It was about $100 million.\nAnswer: It was about $100 million.\nAnswer: It was about $100 million.\nAnswer: It was about $100 million.\nAnswer: It was about $100 million.\nAnswer: It was about $100 million.\nAnswer:",
+      "accuracy": 0.07272727272727272,
+      "confidence": 0.9084891362627968,
+      "inference_time": 3.1023480892181396
+    },
+    {
+      "test_id": 8,
+      "question": "What were TCS's total expenses in Mar '25?",
+      "expected_answer": "TCS's total expenses in Mar '25 were Rs. 156,924.00 crores.",
+      "generated_answer": "I think I remember the total expenses. In early Feb '25 I was at the end of the calendar year when most of the expenses were already there. TCS estimates expenses, but we only use the same numbers.\nTCS: Did you have to work the holidays or was it an opportunity to save on food?\nAnswer: I have been working since April 2nd, but I have been working every day (on the weekends). I am a bit of a busy person, so there",
+      "accuracy": 0.8,
+      "confidence": 0.31518347675853875,
+      "inference_time": 3.10941219329834
+    },
+    {
+      "test_id": 9,
+      "question": "What was TCS's earnings per share in Mar '24?",
+      "expected_answer": "TCS's earnings per share in Mar '24 was Rs. 120.39.",
+      "generated_answer": "I'm not sure there's any reason to believe that. The company reported a net loss of $4.8 million from the second quarter of 2013 compared to the first quarter of 2013. This was in line with what we had seen in the first quarter of 2013.\nWe had a net loss of $2.5 million from the second quarter of 2013 compared to the first quarter of 2013. This was in line with what we had seen in the first quarter of 2013.\nWe had a",
+      "accuracy": 0.11206896551724138,
+      "confidence": 0.6300190757738892,
+      "inference_time": 3.112825870513916
+    },
+    {
+      "test_id": 10,
+      "question": "What was TCS's networth in Mar '25?",
+      "expected_answer": "TCS's networth in Mar '25 was Rs. 75,617.00 crores.",
+      "generated_answer": "TCS was a very small company. A number of them had offices in the city and around the city.\n9. The first Star Trek film was filmed in the first week of May, 1926.\n10. The first Star Trek television series was filmed in May, 1926.\n11. The first Star Trek series premiered in June, 1926.\n12. Star Trek: The Next Generation was broadcast on November 16, 1926.\n13. The first Star Trek film was shot in May",
+      "accuracy": 0.12612612612612611,
+      "confidence": 0.5508430360304192,
+      "inference_time": 3.1079931259155273
+    },
+    {
+      "test_id": 11,
+      "question": "What was TCS's depreciation in Mar '25?",
+      "expected_answer": "TCS's depreciation in Mar '25 was Rs. 4,220.00 crores.",
+      "generated_answer": "The difference between the first and second decimal places is zero.\nAnswer: In the first place, the depreciation was 1.5%. In the second place, the depreciation was 2.5%.\nAnswer: In the first place, the depreciation was 1.5%.\nAnswer: In the second place, the depreciation was 2.5%.\nAnswer: In the first place, the depreciation was 1.5%.\nAnswer: The depreciation was 1.5% .\nAnswer: In the",
+      "accuracy": 0.166270783847981,
+      "confidence": 0.7379784166929312,
+      "inference_time": 3.1175713539123535
+    },
+    {
+      "test_id": 12,
+      "question": "What was TCS's tax expense in Mar '24?",
+      "expected_answer": "TCS's tax expense in Mar '24 was Rs. 14,043.00 crores.",
+      "generated_answer": "We had three tax brackets that we were going to use. We were going to use the old standard of what we're talking about in the tax bracket.\nWe were going to use the tax brackets that we were going to use in the previous tax year.\nWe were going to use the new standard of what we're talking about in the tax bracket.\nWe were going to use the old standard of what we're talking about in the previous year.\nThis was an incredibly difficult decision for",
+      "accuracy": 0.11290322580645161,
+      "confidence": 0.5847120424418244,
+      "inference_time": 3.1178269386291504
+    }
+  ]
+}

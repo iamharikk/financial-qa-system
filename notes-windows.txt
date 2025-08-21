@@ -1,0 +1,8 @@
+python -m venv my_project_venv
+
+my_project_venv\Scripts\activate
+
+To activate venv, terminal need to have enough privilages
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+
+pip install -r requirements.txt
