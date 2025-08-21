@@ -83,19 +83,31 @@ def main():
     print("\n3. Preprocessing the Dataset...")
     # Preprocess function - following doc structure exactly
     def preprocess_function(examples):
-        inputs = [f"{examples['instruction'][i]}\n{tokenizer.bos_token}" for i in range(len(examples['instruction']))]
-        targets = [f"{examples['output'][i]}{tokenizer.eos_token}" for i in range(len(examples['output']))]
+        # Combine instruction and output for causal language modeling
+        texts = []
+        for i in range(len(examples['instruction'])):
+            text = f"{examples['instruction'][i]}\n{examples['output'][i]}{tokenizer.eos_token}"
+            texts.append(text)
         
-        model_inputs = tokenizer(inputs, truncation=True, padding="longest", max_length=hyperparameters["max_length"])
+        # Tokenize the combined texts
+        model_inputs = tokenizer(
+            texts, 
+            truncation=True, 
+            padding=False,  # Don't pad here, let data collator handle it
+            max_length=hyperparameters["max_length"]
+        )
         
-        with tokenizer.as_target_tokenizer():
-            labels = tokenizer(targets, truncation=True, padding="longest", max_length=hyperparameters["max_length"])
+        # For causal LM, labels are the same as input_ids
+        model_inputs["labels"] = model_inputs["input_ids"].copy()
         
-        model_inputs["labels"] = labels["input_ids"]
         return model_inputs
     
-    # Apply preprocessing
-    tokenized_datasets = dataset.map(preprocess_function, batched=True)
+    # Apply preprocessing and remove original columns
+    tokenized_datasets = dataset.map(
+        preprocess_function, 
+        batched=True,
+        remove_columns=dataset["train"].column_names  # Remove original columns
+    )
     print("Dataset preprocessing completed")
     
     print("\n4. Defining Training Arguments...")
