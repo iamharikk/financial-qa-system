@@ -22,6 +22,10 @@ class FineTunedModelHandler:
             self.tokenizer = AutoTokenizer.from_pretrained(self.model_path)
             self.model = AutoModelForCausalLM.from_pretrained(self.model_path)
             
+            print(f"FINE-TUNED MODEL DEBUG: Loaded model from {self.model_path}")
+            print(f"FINE-TUNED MODEL DEBUG: Model config: {self.model.config}")
+            print(f"FINE-TUNED MODEL DEBUG: Tokenizer vocab size: {len(self.tokenizer)}")
+            
             # Set model to evaluation mode
             self.model.eval()
             
@@ -52,6 +56,9 @@ class FineTunedModelHandler:
         """
         if not self.model_loaded:
             raise ValueError("Model not loaded. Call load_model() first.")
+        
+        print(f"FINE-TUNED MODEL DEBUG: generate_response called with question: '{question}'")
+        print(f"FINE-TUNED MODEL DEBUG: Using model from path: {self.model_path}")
         
         # Start timing
         start_time = time.time()
