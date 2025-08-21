@@ -81,7 +81,7 @@ def main():
     print(f"Model parameters: {model.num_parameters():,}")
     
     print("\n3. Preprocessing the Dataset...")
-    # Preprocess function - following doc structure exactly
+    # Preprocess function - simplified approach
     def preprocess_function(examples):
         # Combine instruction and output for causal language modeling
         texts = []
@@ -90,17 +90,18 @@ def main():
             texts.append(text)
         
         # Tokenize the combined texts
-        model_inputs = tokenizer(
+        result = tokenizer(
             texts, 
             truncation=True, 
-            padding=False,  # Don't pad here, let data collator handle it
-            max_length=hyperparameters["max_length"]
+            padding=True,  # Enable padding to avoid tensor issues
+            max_length=hyperparameters["max_length"],
+            return_tensors=None  # Return as lists, not tensors
         )
         
         # For causal LM, labels are the same as input_ids
-        model_inputs["labels"] = [ids[:] for ids in model_inputs["input_ids"]]
+        result["labels"] = result["input_ids"]
         
-        return model_inputs
+        return result
     
     # Apply preprocessing and remove original columns
     tokenized_datasets = dataset.map(
@@ -125,13 +126,10 @@ def main():
     print("Training arguments configured")
     
     print("\n5. Creating Trainer and Starting Fine-tuning...")
-    # Use proper data collator for language modeling
-    from transformers import DataCollatorForLanguageModeling
+    # Use default data collator since we're padding in preprocessing
+    from transformers import default_data_collator
     
-    data_collator = DataCollatorForLanguageModeling(
-        tokenizer=tokenizer,
-        mlm=False,  # We're doing causal LM, not masked LM
-    )
+    data_collator = default_data_collator
     
     # Create trainer - exactly as in doc
     trainer = Trainer(
